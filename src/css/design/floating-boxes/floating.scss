@@ -1,0 +1,500 @@
+.floating-boxes {
+    position: fixed;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+
+
+    .floating-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+    }
+
+    .floating-box {
+        position: absolute;
+        // top: 0;
+        // left: 0;
+        z-index: 2;
+        // width: 225px;
+        // height: 150px;
+        background: #fff;
+        box-shadow: 1px 1px 5px 1px #ccc;
+        border-radius: 12px;
+    }
+
+    .page-modify {
+        width: 320px;
+        min-height: 200px;
+
+        .page-name {
+            text-align: center;
+            padding: 1em 0.5em;
+
+            span {
+                font-weight: bold;
+            }
+        }
+
+        .page-utils {
+
+            .util {
+                padding: 0.5em 1em;
+                display: flex;
+                align-items: center;
+                border-radius: 12px;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: #fafafa;
+                }
+
+                .icon-container {
+                    width: 2em;
+                }
+
+            }
+
+            .content {
+                display: block;
+                margin-left: 2em;
+            }
+
+            .util-input {
+                padding: 0.5em 1em;
+
+                input {
+                    display: block;
+                    width: 100%;
+                    border: none;
+                    border-bottom: 1px solid #ccc;
+                    padding: 0.5em;
+                    outline: none;
+                }
+            }
+
+            .util-btn {
+                display: flex;
+                justify-content: flex-end;
+                padding: 0.5em;
+
+                button {
+                    display: block;
+                    border-radius: 12px;
+                    border: none;
+                    color: #0051ff;
+                    font-weight: bold;
+                    cursor: pointer;
+                    background-color: #fff;
+                }
+            }
+        }
+    }
+
+    .change-icon {
+        width: 512px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 256px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                text-align: center;
+                font-weight: bold;
+                padding: 1em;
+            }
+        }
+
+        .icons-container {
+            flex-grow: 1;
+            overflow: auto;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .icons {
+                display: flex;
+                flex-wrap: wrap;
+                // border: 1px solid #ccc;
+                border-radius: 12px;
+                justify-content: center;
+
+                .icon {
+                    width: max-content;
+                    min-width: 72px;
+                    height: 72px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    border: 1px solid #ccc;
+                    margin: 12px;
+                    font-size: 1.5em;
+                    border-radius: inherit;
+                    cursor: pointer;
+                    color: #000 !important;
+
+                    &:hover {
+                        transform: scale(1.2);
+                    }
+
+
+                    .icon-name {
+                        font-size: 0.5em;
+                        // font-weight: bold;
+                        display: block;
+                        text-align: center;
+                        margin: 6px;
+                    }
+                }
+            }
+        }
+    }
+
+    .design-block {
+        .block {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #ccc;
+            margin: 8px;
+            cursor: pointer;
+
+            .block-icon {
+                font-size: 2em;
+            }
+            
+        }
+
+    }
+
+    .ui-config {
+        width: 512px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 256px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                text-align: center;
+                font-weight: bold;
+                padding: 1em;
+            }
+        }
+
+        .configs-container {
+            flex-grow: 1;
+            
+            border: 1px solid #ccc;
+            border-radius: 12px;            
+            
+            display: flex;
+            flex-wrap: nowrap;
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .sections{                
+                width: 150px;                
+                border-right: 1px solid #ccc;
+                padding-top: 12px;
+                font-size: 12px;
+
+                .section{
+                    padding: 8px 4px;
+                    cursor: pointer;
+
+                    &:hover{
+                        background: #fafafa;
+                        color: #000
+                    }
+                }
+
+                .section-active{
+                    background: #000;
+                    color: #fff;
+                }
+            }
+
+            .config-container{                
+                flex-grow: 1;
+                width: calc(100% - 150px);
+                
+                
+                .scrollable-box{
+                    display: block;
+                    height: 100%;
+                    overflow: auto;
+                    padding: 12px;
+
+                    
+                    .config-title{
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #000;
+                    }
+
+
+                    .config-content{
+                        margin-top: 12px;
+                    }
+
+                    .buttons{
+                        display: flex;
+
+                        .primary{
+                            border: none;
+                            outline: none;
+                            border-radius: 6px;
+                            background: #0051ff;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 6px 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .page-config {
+        width: 720px;
+        height: 512px;
+        top: 200px;
+        left: calc(50vw - 360px);
+        display: flex;
+        flex-direction: column;
+        padding: 0.5em;
+
+        .title {
+            span {
+                display: block;
+                // text-align: center;
+                // font-weight: bold;
+                padding: 1em 0;
+                color: #000;
+                font-size: 24px;
+            }
+        }
+
+        .configs-container {
+            flex-grow: 1;
+            
+            border: 1px solid #ccc;
+            border-radius: 12px;            
+            
+            display: flex;
+            flex-wrap: nowrap;
+
+            &::-webkit-scrollbar-track {
+                opacity: 0;
+                background-color: unset;
+            }
+
+            .sections{                
+                width: 150px;                
+                border-right: 1px solid #ccc;
+                padding-top: 12px;
+                font-size: 12px;
+
+                .section{
+                    padding: 8px 4px;
+                    cursor: pointer;
+
+                    &:hover{
+                        background: #fafafa;
+                        color: #000
+                    }
+                }
+
+                .section-active{
+                    background: #000;
+                    color: #fff;
+                }
+            }
+
+            .config-container{                
+                flex-grow: 1;
+                width: calc(100% - 150px);
+                max-height: 418px;               
+                
+                .scrollable-box{
+                    display: block;
+                    height: 100%;
+                    overflow: auto;
+                    padding: 12px;
+
+                  
+
+                    
+                    .config-title{
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #000;
+                    }
+
+                    .property{
+                        display: block;
+                        margin-top: 1em;
+                    }
+
+                    .text-property{
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        
+
+                        .label{                            
+                            width: 30%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+                            padding-right: 2em;                            
+                        }
+
+                        .input-text {
+                            width: 70%;
+                            input{
+                                border: none;
+                                border-bottom: 1px solid #ccc;
+                                color: #000;
+                                padding: 0.5em 0;
+                                display: block;
+                                width: 100%;
+                            }
+                        }
+                    }
+
+                    .checkbox-property{
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        
+
+                        .label{                            
+                            width: 30%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+                            padding-right: 2em;                            
+                        }
+
+                        .checkboxes{
+                            display: flex;
+                            flex-wrap: nowrap;
+                            width: 70%;                            
+
+                            .checkbox-contain{
+                                display: flex;
+                                
+                                width: 50%;
+                                .checkbox{
+                                    margin-right: 12px;
+                                }
+                                .checkbox-label{
+                                    
+                                }
+                            }
+                        }
+                    }
+
+
+                    .fields-picker {
+                        width: 100%;
+                        display: flex;
+                        flex-wrap: wrap;                        
+                        
+                        .table-fields-picker {
+                            width: 250px;                        
+                            border: 1px solid #ccc;                       
+                            margin: 12px 6px;
+
+                            border-radius: 4px;
+
+                            &:nth-child(2n + 1){
+                                margin-left: 0;
+                            }
+                        }
+    
+                        .fields-picker-header {
+                            padding: 8px 6px;
+                            border-bottom: 1px solid #ccc;
+                            font-weight: bold;
+                            text-align: left;
+                            display: flex;
+    
+                            .add-icon{
+                                margin-left: auto;
+                                cursor: pointer;
+                            }
+                        }
+    
+                        .picker-field-list{
+                            padding: 8px 6px;
+                        }
+    
+                        .field-picker {
+                            display: flex;
+                            flex-wrap: nowrap;
+    
+                            .picker-checkbox{
+                                width: 32px;
+                                input{
+                                    transform: scale(1.1);
+                                }
+                            }
+                            .picker-label{
+                                margin-left: 2em;
+                            }
+                        }
+                    }
+
+
+
+
+
+                    .config-content{
+                        margin-top: 12px;
+                    }
+
+                    .buttons{
+                        display: flex;
+
+                        .primary{
+                            border: none;
+                            outline: none;
+                            border-radius: 6px;
+                            background: #0051ff;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 6px 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

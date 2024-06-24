@@ -1,0 +1,1067 @@
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAdd,
+  faArrowDown,
+  faArrowUpRightFromSquare,
+  faCaretDown,
+  faCheckCircle,
+  faCircleXmark,
+  faCog,
+  faDownload,
+  faEdit,
+  faHome,
+  faMagnifyingGlass,
+  faSquarePlus,
+  faTrash,
+  faUpload,
+} from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
+import $ from "jquery";
+
+export default function TABLE(props) {
+  const { cache, preview, floating, pages, page, validButtonChildOnTable } =
+    useSelector((state) => state);
+
+  const {
+    id,
+    zIndex,
+    name,
+    style,
+    source,
+    buttons,
+    visibility,
+    removeComponent,
+    insertComponent,
+    PropsSwitching,
+    parent,
+    renderFrontLiner,
+    renderBackLiner,
+    appendChildComponent,
+    children,
+  } = props;
+  const dispatch = useDispatch();
+  const sourceTypes = [
+    { type: "database", name: "Cơ sở dữ liệu" },
+    { type: "api", name: "API" },
+  ];
+
+  // const calculateAndField = calculateList.concat(source?.calculates)
+  // const calculateAndField = calculateList.concat(source?.calculates)
+
+  const fakeDataAmount = 500;
+  const [fakeData, setFakeData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [isShowCal, setIsShowCal] = useState(false);
+  const { fields, calculates } = source;
+  const [calculateList, setCalculateList] = useState(
+    calculates?.every((item) => item.checked) ? calculates : []
+  );
+  const [list, setList] = useState(fields);
+  // const [calculateList, setCalculateList] = useState(calculates);
+  const fieldsAndCalculates = list?.concat(calculateList);
+
+  // const selectedCpn = useSelector((state) => state.selectedCpn);
+  // const setPropByPath = (object, path = [], value) => {
+  //   if (path?.length == 1) {
+  //     object = { ...object, [path[0]]: value };
+  //   } else {
+  //     try {
+  //       object[path[0]] = setPropByPath(
+  //         object[path[0]],
+  //         path.slice(1, path.length),
+  //         value
+  //       );
+  //     } catch (e) { }
+  //   }
+  //   return object;
+  // };
+  // const updateSelectedComponent = (value, path) => {
+  //   const newComp = setPropByPath(selectedCpn, path, value);
+
+  //   dispatch({
+  //     branch: "design-ui",
+  //     type: "overideSelectedComp",
+  //     payload: {
+  //       component: newComp,
+  //     },
+  //   });
+  // };
+  // useEffect(() => {
+  //   updateSelectedComponent(fieldsAndCalculates, ["props", "source", "thinh"]);
+  // }, []);
+  // console.log("this is thinh", fields);
+  // const [list, setList] = useState(fields);
+  // const [calculateList, setCalculateList] = useState(calculates);
+  // const fieldsAndCalculates = list?.concat(calculateList)
+  // console.log("this is list", fieldsAndCalculates);
+  // console.log("this is calculateList", calculateList);
+
+  const [drops, setDrops] = useState({
+    configs: true,
+  });
+
+  useEffect(() => {
+    const initialFakeData = createFakeData();
+
+    setFakeData(initialFakeData);
+  }, [fields]);
+
+  const isActive = () => {
+    const { activeComponent, hoverComponent } = cache;
+    if (activeComponent.indexOf(id) !== -1 || hoverComponent == id) {
+      return true;
+    }
+    return false;
+  };
+
+  const SwitchingState = () => {
+    const { activeComponent } = cache;
+    if (activeComponent != id) {
+      dispatch({
+        branch: "design-ui",
+        type: "setActiveComponent",
+        payload: {
+          id,
+        },
+      });
+      $("#property-trigger").click();
+    }
+  };
+
+  const ComponentHover = () => {
+    dispatch({
+      branch: "design-ui",
+      type: "setHoverComponent",
+      payload: {
+        id,
+      },
+    });
+  };
+
+  const changeTableName = (e) => {
+    const newName = e.target.value;
+    PropsSwitching(id, "name", newName);
+  };
+
+  const AddButton = (e) => {
+    const { block } = floating;
+    const buttons = validButtonChildOnTable;
+
+    if (buttons.indexOf(block) != -1) {
+      appendChildComponent(id);
+    }
+  };
+
+  const moveToAddPage = () => {
+    const hiddenPage = pages.find((page) => page.block == id);
+
+    if (hiddenPage) {
+      console.log("idddd", id);
+      dispatch({
+        branch: "side-funcs",
+        type: "UpdateHiddenPageButDeHellOnTable",
+        payload: {
+          block_id: id,
+        },
+      });
+
+      dispatch({
+        branch: "design-ui",
+        type: "pageSelected",
+        payload: {
+          page: hiddenPage,
+        },
+      });
+    }
+  };
+
+  const parseFormatToValue = (pattern, value) => {
+    const number = value;
+    let result = pattern;
+    if (!pattern) {
+      result = "[N]";
+    }
+    const today = new Date();
+    const date = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    result = result.replaceAll("[DD]", date);
+    result = result.replaceAll("[MM]", month);
+    result = result.replaceAll("[YYYY]", year);
+    const numberPlaces = [];
+    for (let i = 0; i < result.length; i++) {
+      if (result[i] === "[") {
+        var temp = "";
+        for (let j = i + 1; j < result.length; j++) {
+          if (result[j] === "N" && result[j] !== "]") {
+            temp += result[j];
+          } else {
+            if (result[j] === "]") {
+              numberPlaces.push(temp);
+              i = j;
+              temp = "";
+            }
+          }
+        }
+      }
+    }
+
+    if (numberPlaces.length == 0) {
+      result += "[N]";
+      numberPlaces.push("N");
+    }
+    const places = numberPlaces.map((place) => {
+      const placeLength = place.length;
+      let numberLength = number.toString().length;
+      let header = "";
+      for (let i = 0; i < placeLength; i++) {
+        header += "0";
+      }
+      const result =
+        header.slice(0, placeLength - numberLength) + number.toString();
+      return { place, value: result };
+    });
+    for (let i = 0; i < places.length; i++) {
+      const { place, value } = places[i];
+      result = result.replace(`[${place}]`, value);
+    }
+    return result;
+  };
+
+  const parseDateToFormatedValue = (format) => {
+    const date = new Date();
+    let result = format;
+    result = result.replaceAll("dd", date.getDate());
+    result = result.replaceAll("MM", date.getMonth() + 1);
+    result = result.replaceAll("yyyy", date.getFullYear());
+
+    result = result.replaceAll("ss", date.getSeconds());
+    result = result.replaceAll("mm", date.getMinutes());
+    result = result.replaceAll("hh", date.getHours());
+
+    return result;
+  };
+
+  const makeSampleDataBaseOnDataType = (field, currentIndex) => {
+    const { props } = field;
+
+    let value;
+    const {
+      DATATYPE,
+      NULL,
+      AUTO_INCREMENT,
+      FORMAT,
+      PATTERN,
+      DEFAULT_TRUE,
+      DEFAULT_FALSE,
+      DECIMAL_PLACE,
+    } = props || {};
+
+    switch (DATATYPE) {
+      case "INT":
+      case "INT UNSIGNED":
+      case "BIGINT":
+      case "BIGINT UNSIGNED":
+        if (AUTO_INCREMENT) {
+          value = parseFormatToValue(PATTERN, currentIndex);
+        } else {
+          value = Math.floor(Math.random() * 1000) + 100;
+        }
+        break;
+      case "BOOL":
+        value = DEFAULT_TRUE;
+        if (currentIndex % 4 == 0) {
+          value = DEFAULT_FALSE;
+        }
+        break;
+
+      case "DECIMAL":
+      case "DECIMAL UNSIGNED":
+        const decimalPlace = parseInt(DECIMAL_PLACE);
+        const postfix = "0".repeat(decimalPlace);
+        value = `${Math.floor(Math.random() * 10) + 1},${postfix}`;
+        break;
+
+      case "DATE":
+      case "DATETIME":
+        value = parseDateToFormatedValue(FORMAT);
+        break;
+
+      case "TEXT":
+        value = `${field.fomular_alias}-${
+          Math.floor(Math.random() * 1000) + 100
+        }`;
+        break;
+    }
+
+    if (NULL) {
+      value = `${value} | NULL`;
+    }
+    return value;
+  };
+
+  const createFakeData = () => {
+    const { fields } = source;
+    const data = [];
+    for (let i = 0; i < fakeDataAmount; i++) {
+      const record = {
+        __indexing__: i + 1,
+      };
+
+      for (let j = 0; j < fields.length; j++) {
+        const field = fields[j];
+        record[field.fomular_alias] = makeSampleDataBaseOnDataType(field, i);
+      }
+      data.push(record);
+    }
+    return data;
+  };
+
+  const calculateMaxPages = () => {
+    const { row_per_page } = visibility;
+    let totalPages = 0;
+    if (row_per_page > 0) {
+      totalPages = Math.ceil(fakeDataAmount / row_per_page);
+    } else {
+      totalPages = 1;
+
+      return (
+        <div
+          className="design-zone-container"
+          style={{ zIndex }}
+          // onClick={SwitchingState}
+        >
+          {renderFrontLiner(id, parent)}
+          <div
+            className={`design-zone table-design ${
+              isActive() ? "design-zone-active" : ""
+            }`}
+            onMouseEnter={ComponentHover}
+            style={{ zIndex }}
+          >
+            {source.type == "database" && (
+              <div
+                className="preview"
+                style={{ zIndex: 2, position: "relative" }}
+              >
+                <div className="top-utils">
+                  <div className="table-name">
+                    <input
+                      className={`main-input ${
+                        isActive() ? "input-active" : ""
+                      }`}
+                      value={name}
+                      onChange={changeTableName}
+                      // style={style}
+                    />
+                  </div>
+                  {buttons.add.state && (
+                    <div className="util " onClick={moveToAddPage}>
+                      <FontAwesomeIcon icon={faSquarePlus} />
+                    </div>
+                  )}
+                  {buttons.export.state && (
+                    <div className="util ">
+                      <FontAwesomeIcon icon={faDownload} />
+                    </div>
+                  )}
+                  {buttons.import.state && (
+                    <div className="util ">
+                      <FontAwesomeIcon icon={faUpload} />
+                    </div>
+                  )}
+                </div>
+                <hr className="devider" />
+                <table className="preview-table">
+                  <thead>
+                    <tr>
+                      {visibility.indexing && <td>No.</td>}
+                      {source.fields?.map((field) => {
+                        return (
+                          <td className={getClassNameBasedOnRole(field)}>
+                            {field.field_name}
+                          </td>
+                        );
+                      })}
+                      {source.calculates?.map((field) => {
+                        return <td>{field.display_name}</td>;
+                      })}
+                      {(buttons.detail.state ||
+                        buttons.update.state ||
+                        buttons.delete.state ||
+                        buttons.approve.state ||
+                        buttons.unapprove.state ||
+                        source.search.state) && <td>Thao tác</td>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {source.search.state && (
+                      <tr>
+                        {visibility.indexing && <th></th>}
+                        {source.fields?.map((field) => {
+                          return (
+                            <td className="search-cell">
+                              <input type="text" />
+                            </td>
+                          );
+                        })}
+                        {source.calculates?.map((field) => {
+                          return (
+                            <td className="search-cell">
+                              <input type="text" />
+                            </td>
+                          );
+                        })}
+                        {(buttons.detail.state ||
+                          buttons.update.state ||
+                          buttons.delete.state ||
+                          buttons.approve.state ||
+                          buttons.unapprove.state ||
+                          source.search.state) && (
+                          <td className="table-icons">
+                            <div className="icons">
+                              <div className="table-icon">
+                                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                              </div>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    )}
+                    <tr>
+                      {visibility.indexing && <td>1</td>}
+
+                      {source.fields?.map((field) => {
+                        return <td>{field.fomular_alias}</td>;
+                      })}
+                      {source.calculates?.map((field) => {
+                        return (
+                          <td>
+                            {field.fomular_alias} = {field.fomular}
+                          </td>
+                        );
+                      })}
+                      {(buttons.detail.state ||
+                        buttons.update.state ||
+                        buttons.delete.state ||
+                        buttons.approve.state ||
+                        buttons.unapprove.state ||
+                        source.search.state) && (
+                        <td className="table-icons">
+                          <div className="icons" onMouseUp={AddButton}>
+                            {buttons.detail.state && (
+                              <div className="table-icon">
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />{" "}
+                              </div>
+                            )}
+                            {buttons.update.state && (
+                              <div className="table-icon">
+                                <FontAwesomeIcon icon={faEdit} />{" "}
+                              </div>
+                            )}
+                            {buttons.delete.state && (
+                              <div className="table-icon">
+                                <FontAwesomeIcon icon={faTrash} />{" "}
+                              </div>
+                            )}
+                            {buttons.approve.state && (
+                              <div className="table-icon">
+                                <FontAwesomeIcon icon={faCheckCircle} />{" "}
+                              </div>
+                            )}
+                            {buttons.unapprove.state && (
+                              <div className="table-icon">
+                                <FontAwesomeIcon icon={faCircleXmark} />{" "}
+                              </div>
+                            )}
+                            {children}
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <nav
+              aria-label="Page navigation example"
+              className="navigation-disabled"
+              style={{ display: "flex", padding: 12 }}
+            >
+              <span className="period-display">
+                Hiển thị {visibility.row_per_page} của {fakeData.length} kết
+                quả.{" "}
+              </span>
+              <ul className="pagination ml-auto">
+                {/* Nút đến trang đầu */}
+                <li className={`page-item`}>
+                  <button className="page-link">&#8810;</button>
+                </li>
+                <li className={`page-item`}>
+                  <button className="page-link">&laquo;</button>
+                </li>
+                {[...Array(buttons.navigator.visible).keys()].map((pos) => (
+                  <li className={`page-item`}>
+                    <button className="page-link">
+                      {currentPage +
+                        pos -
+                        Math.floor(buttons.navigator.visible / 2)}
+                    </button>
+                  </li>
+                ))}
+
+                <li className={`page-item`}>
+                  <button className="page-link">&raquo;</button>
+                </li>
+
+                <li className={`page-item`}>
+                  {" "}
+                  {/** MAY CAUSE BUG HERE */}
+                  <button className="page-link">&#8811;</button>
+                </li>
+              </ul>
+            </nav>
+
+            <div className="trigger-bg" onClick={SwitchingState}></div>
+          </div>
+          {renderBackLiner(id, parent)}
+        </div>
+      );
+    }
+    return totalPages;
+  };
+
+  const getDataInSpecificPeriod = (data) => {
+    return data.slice(
+      currentPage * visibility.row_per_page,
+      (currentPage + 1) * visibility.row_per_page
+    );
+  };
+
+  const movePageTo = (pageIndex) => {
+    setCurrentPage(pageIndex);
+  };
+
+  const getClassNameBasedOnRole = (field) => {
+    const { approve, unapprove } = buttons;
+    let className = [];
+
+    const approveFieldId = approve.field.id;
+    const unapproveFieldId = unapprove.field.id;
+
+    if (approve.state && approveFieldId == field.id) {
+      className.push("approve-field");
+    }
+    if (unapprove.state && unapproveFieldId == field.id) {
+      className.push("unapprove-field");
+    }
+    return className.join("-");
+  };
+
+  if (preview) {
+    return (
+      <div className="design-zone-container " style={{ zIndex }}>
+        {renderFrontLiner(id, parent)}
+        <div
+          className={`design-zone table-design table-preview-state`}
+          style={{ zIndex }}
+        >
+          {source.type == "database" && (
+            <div className="preview">
+              <div className="top-utils">
+                <div className="table-name">
+                  <span>{name}</span>
+                </div>
+                {buttons.add.state && (
+                  <div className="util icon-blue" onClick={moveToAddPage}>
+                    <FontAwesomeIcon icon={faSquarePlus} />
+                  </div>
+                )}
+                {buttons.export.state && (
+                  <div className="util icon-green">
+                    <FontAwesomeIcon icon={faDownload} />
+                  </div>
+                )}
+                {buttons.import.state && (
+                  <div className="util icon-flammel">
+                    <FontAwesomeIcon icon={faUpload} />
+                  </div>
+                )}
+              </div>
+              <hr className="devider" />
+              <table className="preview-table">
+                <thead>
+                  <tr>
+                    {visibility.indexing && <td>No.</td>}
+                    {source.fields?.map((field) => {
+                      return <td>{field.field_name}</td>;
+                    })}
+
+                    {source.calculates?.map((field) => {
+                      return <td>{field.display_name}</td>;
+                    })}
+
+                    {(buttons.detail.state ||
+                      buttons.update.state ||
+                      buttons.delete.state ||
+                      buttons.approve.state ||
+                      buttons.unapprove.state ||
+                      source.search.state) && <td>Thao tác</td>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {source.search.state && (
+                    <tr>
+                      {visibility.indexing && <th></th>}
+                      {source.fields?.map((field) => {
+                        return (
+                          <td className="search-cell">
+                            <input type="text" />
+                          </td>
+                        );
+                      })}
+                      {source.calculates?.map((field) => {
+                        return (
+                          <td className="search-cell">
+                            <input type="text" />
+                          </td>
+                        );
+                      })}
+                      {(buttons.detail.state ||
+                        buttons.update.state ||
+                        buttons.delete.state ||
+                        buttons.approve.state ||
+                        buttons.unapprove.state ||
+                        source.search.state) && (
+                        <td className="table-icons">
+                          <div className="icons">
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faMagnifyingGlass} />
+                            </div>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  )}
+                  {getDataInSpecificPeriod(fakeData).map((record, index) => (
+                    <tr>
+                      {visibility.indexing && <td>{record.__indexing__}</td>}
+
+                      {source.fields?.map((field) => {
+                        return <td>{record[field.fomular_alias]}</td>;
+                      })}
+                      {source.calculates?.map((field) => {
+                        return <td>{field.fomular}</td>;
+                      })}
+                      {(buttons.detail.state ||
+                        buttons.update.state ||
+                        buttons.delete.state ||
+                        buttons.approve.state ||
+                        buttons.unapprove.state ||
+                        source.search.state) && (
+                        <td className="table-icons">
+                          <div className="icons" onMouseUp={AddButton}>
+                            {buttons.detail.state && (
+                              <div className="table-icon icon-1">
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />{" "}
+                              </div>
+                            )}
+                            {buttons.update.state && (
+                              <div className="table-icon icon-2">
+                                <FontAwesomeIcon icon={faEdit} />{" "}
+                              </div>
+                            )}
+                            {buttons.delete.state && (
+                              <div className="table-icon icon-3">
+                                <FontAwesomeIcon icon={faTrash} />{" "}
+                              </div>
+                            )}
+                            {buttons.approve.state && (
+                              <div className="table-icon icon-4">
+                                <FontAwesomeIcon icon={faCheckCircle} />{" "}
+                              </div>
+                            )}
+                            {buttons.unapprove.state && (
+                              <div className="table-icon icon-5">
+                                <FontAwesomeIcon icon={faCircleXmark} />{" "}
+                              </div>
+                            )}
+                            {children}
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <nav
+            aria-label="Page navigation example"
+            style={{ display: "flex", padding: 12 }}
+          >
+            <span className="period-display">
+              Hiển thị {visibility.row_per_page} của {fakeData.length} kết quả.{" "}
+            </span>
+            <ul className="pagination ml-auto">
+              {/* Nút đến trang đầu */}
+              <li
+                className={`page-item`}
+                onClick={() => {
+                  movePageTo(0);
+                }}
+              >
+                <button className="page-link">&#8810;</button>
+              </li>
+              <li
+                className={`page-item`}
+                onClick={() => {
+                  currentPage >= 1 && movePageTo(currentPage - 1);
+                }}
+              >
+                <button className="page-link">&laquo;</button>
+              </li>
+              {[...Array(buttons.navigator.visible).keys()].map((pos) => {
+                const current =
+                  1 +
+                  currentPage +
+                  pos -
+                  Math.floor(buttons.navigator.visible / 2);
+                if (current > 0 && current < calculateMaxPages()) {
+                  return (
+                    <li
+                      className={`page-item ${
+                        currentPage + 1 == current ? "navigator-active" : ""
+                      }`}
+                      onClick={() => {
+                        movePageTo(
+                          currentPage +
+                            pos -
+                            Math.floor(buttons.navigator.visible / 2)
+                        );
+                      }}
+                    >
+                      <button className="page-link">{current}</button>
+                    </li>
+                  );
+                }
+              })}
+
+              <li
+                className={`page-item`}
+                onClick={() => {
+                  currentPage < calculateMaxPages() &&
+                    movePageTo(currentPage + 1);
+                }}
+              >
+                <button className="page-link">&raquo;</button>
+              </li>
+
+              <li
+                className={`page-item`}
+                onClick={() => {
+                  movePageTo(calculateMaxPages() - 1);
+                }}
+              >
+                {" "}
+                {/** MAY CAUSE BUG HERE */}
+                <button className="page-link">&#8811;</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    );
+  } else {
+    // const arr1 = [...source.fields];
+
+    // const abc = arr1.map((field) => {
+    //   return (
+    //     <td className={getClassNameBasedOnRole(field)}>
+    //       {field.display_name || field.field_name}
+    //     </td>
+    //   );
+    // });
+
+    return (
+      <div
+        className="design-zone-container"
+        style={{ zIndex }}
+        // onClick={SwitchingState}
+      >
+        {renderFrontLiner(id, parent)}
+        <div
+          className={`design-zone table-design ${
+            isActive() ? "design-zone-active" : ""
+          }`}
+          onMouseEnter={ComponentHover}
+          style={{ zIndex }}
+        >
+          {source.type == "database" && (
+            <div
+              className="preview"
+              style={{ zIndex: 2, position: "relative" }}
+            >
+              <div className="top-utils">
+                <div className="table-name">
+                  <input
+                    className={`main-input ${isActive() ? "input-active" : ""}`}
+                    value={name}
+                    onChange={changeTableName}
+                    // style={style}
+                  />
+                </div>
+                {buttons.add.state && (
+                  <div className="util " onClick={moveToAddPage}>
+                    <FontAwesomeIcon icon={faSquarePlus} />
+                  </div>
+                )}
+                {buttons.export.state && (
+                  <div className="util ">
+                    <FontAwesomeIcon icon={faDownload} />
+                  </div>
+                )}
+                {buttons.import.state && (
+                  <div className="util ">
+                    <FontAwesomeIcon icon={faUpload} />
+                  </div>
+                )}
+              </div>
+              <hr className="devider" />
+              <table className="preview-table">
+                <thead>
+                  <tr>
+                    {/* this is where to design the lookalike table chart (thinh) */}
+                    {visibility.indexing && <td>No.</td>}
+
+                    {/* {source.fields?.map((field) => {
+                      return (
+                        <td className={getClassNameBasedOnRole(field)}>
+                          {field.DISPLAY_NAME || field.field_name || field.display_name}
+                        </td>
+                        
+                      );
+                    })}
+      
+                    {source.calculates?.map((field) => {
+                      if(field.checked === true){
+                        return <td>{field.display_name}</td>;
+                      }
+                    })} */}
+
+                    {source?.display_fields?.map(
+                      (field) =>
+                        // field?.checked || field?.field_name ||
+                        field?.label && (
+                          <td className={getClassNameBasedOnRole(field)}>
+                            {field?.DISPLAY_NAME ||
+                              field?.field_name ||
+                              field?.display_name ||
+                              field?.label}
+                          </td>
+                        )
+                    )}
+
+                    {/* {source.calculates?.map((field) => {
+                        return <td>{field.display_name}</td>;
+                    })} */}
+                    {}
+                    {/* here */}
+                    {(buttons.detail.state ||
+                      buttons.update.state ||
+                      buttons.delete.state ||
+                      buttons.approve.state ||
+                      buttons.unapprove.state ||
+                      source.search.state) && <td>Thao tác</td>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {source.search.state && (
+                    <tr>
+                      {visibility.indexing && <th></th>}
+                      {source?.display_fields?.map((field) => {
+                        return (
+                          field?.id &&
+                          field?.label && (
+                            <td className="search-cell">
+                              <input type="text" />
+                            </td>
+                          )
+                        );
+                      })}
+                      {/* thinh them input cua calculate con thieu va checked === true */}
+                      {/* {source.calculates?.map((field) => {
+                         if(field.checked === true){
+                          return (
+                            <td className="search-cell">
+                              <input type="text" />
+                            </td>
+                          );
+                        }
+
+                      })} */}
+                      {(buttons.detail.state ||
+                        buttons.update.state ||
+                        buttons.delete.state ||
+                        buttons.approve.state ||
+                        buttons.unapprove.state ||
+                        source.search.state) && (
+                        <td className="table-icons">
+                          <div className="icons">
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faMagnifyingGlass} />
+                            </div>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  )}
+                  <tr>
+                    {visibility.indexing && <td>1</td>}
+
+                    {/* {source.fields?.map((field) => {
+                      return <td>{field.fomular_alias}</td>;
+                    })}
+                    {source.calculates?.map((field) => {
+                       if(field.checked === true){
+                        return (
+                          <td>
+                            {field.fomular_alias} = {field.fomular}
+                          </td>
+                        );
+                       }
+
+                    })} */}
+                    {/* thinh dang sua */}
+                    {/* {source?.display_fields?.map(
+                      (field) =>
+                        !field?.display_name &&
+                        !field?.formula && <td>{field?.fomular_alias}</td> 
+                    )} */}
+                    {/* thinh sua hien thi bang */}
+                    {source?.display_fields?.map(
+                      (field) =>
+                        field?.label &&
+                        ((field?.value?.length > 0 && (
+                          <td>
+                            {field?.value?.map((val) => (
+                              <>
+                                {val.label} <br></br>
+                              </>
+                            )) || ""}
+                          </td>
+                        )) ||
+                          (field?.value?.length <= 0 && (
+                            <td>{field?.value?.label}</td>
+                          )))
+                    )}
+
+                    {/* thinh dang chinh sua */}
+                    {/* {source?.display_fields
+                        ?.filter((field) => field?.checked)
+                        .map((field) => (
+                          <td>
+                            {field?.fomular_alias} = {field?.fomular}
+                          </td>
+                        ))} */}
+
+                    {(buttons.detail.state ||
+                      buttons.update.state ||
+                      buttons.delete.state ||
+                      buttons.approve.state ||
+                      buttons.unapprove.state ||
+                      source.search.state) && (
+                      <td className="table-icons">
+                        <div className="icons" onMouseUp={AddButton}>
+                          {buttons.detail.state && (
+                            <div className="table-icon">
+                              <FontAwesomeIcon
+                                icon={faArrowUpRightFromSquare}
+                              />{" "}
+                            </div>
+                          )}
+                          {buttons.update.state && (
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faEdit} />{" "}
+                            </div>
+                          )}
+                          {buttons.delete.state && (
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faTrash} />{" "}
+                            </div>
+                          )}
+                          {buttons.approve.state && (
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faCheckCircle} />{" "}
+                            </div>
+                          )}
+                          {buttons.unapprove.state && (
+                            <div className="table-icon">
+                              <FontAwesomeIcon icon={faCircleXmark} />{" "}
+                            </div>
+                          )}
+                          {children}
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <nav
+            aria-label="Page navigation example"
+            className="navigation-disabled"
+            style={{ display: "flex", padding: 12 }}
+          >
+            <span className="period-display">
+              Hiển thị {visibility.row_per_page} của {fakeData.length} kết quả.{" "}
+            </span>
+            <ul className="pagination ml-auto">
+              {/* Nút đến trang đầu */}
+              <li className={`page-item`}>
+                <button className="page-link">&#8810;</button>
+              </li>
+              <li className={`page-item`}>
+                <button className="page-link">&laquo;</button>
+              </li>
+              {[...Array(buttons.navigator.visible).keys()].map((pos) => (
+                <li className={`page-item`}>
+                  <button className="page-link">
+                    {currentPage +
+                      pos -
+                      Math.floor(buttons.navigator.visible / 2)}
+                  </button>
+                </li>
+              ))}
+
+              <li className={`page-item`}>
+                <button className="page-link">&raquo;</button>
+              </li>
+
+              <li className={`page-item`}>
+                {" "}
+                {/** MAY CAUSE BUG HERE */}
+                <button className="page-link">&#8811;</button>
+              </li>
+            </ul>
+          </nav>
+
+          <div className="trigger-bg" onClick={SwitchingState}></div>
+        </div>
+        {renderBackLiner(id, parent)}
+      </div>
+    );
+  }
+}

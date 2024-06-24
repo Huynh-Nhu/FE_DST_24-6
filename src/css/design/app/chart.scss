@@ -1,0 +1,139 @@
+.chart-design{
+    position: relative;    
+    display: block;
+
+    transition: none;
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 5px 2px #ccc;
+
+    border-radius: 8px;
+    margin-top: 12px;
+
+
+    .chart-title{
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+        padding: 8px 4px;
+    }
+
+
+    .preview-table{
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        width: calc(100% - 24px);
+        margin: 12px;
+  
+        thead td {
+            font-weight: bold;
+            background-color: #f0eaea;
+        }
+
+        tr{
+        }
+        
+        th, td{
+            padding: 8px;                
+            border: 1px solid #ccc;
+        }
+
+        .approve-field{
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .unapprove-field{
+            background-color: #ff7b00;
+            color: #fff;
+        }
+
+        .approve-field-unapprove-field{
+            background-color: #5D3587;
+            color: #fff;
+        }
+
+        .search-cell{
+            padding: none;
+            input{
+                outline: none;
+                border: 1px solid #ccc;
+                width: 100%;
+                padding: 4px 6px;
+            }
+        }
+        .search-icon{
+            padding: 4px
+        }
+
+        .table-icons{
+            width: 0;
+
+        }
+
+        .icons{
+            display: flex;
+            
+        }
+        .table-icon{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+
+            padding: 0.25em;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            // border-radius: 50%;
+            border: 1px solid;
+            margin: 0 2px;
+
+            &:hover{
+                background-color: #000;
+                // color: #fff;
+            }
+        }
+    }
+}
+
+.block-statis {
+    background-color:#dbdbdb ;
+    border-radius: 4px;
+    // margin-top: 5px;
+    margin-bottom: 5px;
+    // padding: 10px 20px 10px 20px;
+    margin: 0;
+
+}
+
+.btn-search-statis{
+    color: #e9e1e1;
+    background-color: #1e75cb;
+
+}
+
+
+.inline-statis{
+
+    .inline-statis-header{
+        display: flex;
+        flex-wrap: nowrap;
+        color: #111;
+        font-size: 16px;
+
+        .inline-statis-icon{
+            
+        }
+        .inline-statis-label{
+            margin-left: 12px;
+        }
+    }
+
+    .inline-statis-content{
+        font-size: 24px;;
+    }
+
+}

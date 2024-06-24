@@ -1,0 +1,25 @@
+/* nhu css */
+.input-search {
+  position: relative;
+  display: flex;
+  /* flex-wrap: wrap; */
+  align-items: stretch;
+  width: 100%;
+}
+.label-search{
+    color: #888787;
+}
+@media (max-width: 750px) {
+  .input-search {
+    flex-wrap: nowrap;
+  }
+  .block-statis .a {
+    margin-right: 0 !important;
+  }
+  .block-statis .date {
+    flex-direction: column;
+  }
+  .block-statis input {
+    display: block;    
+  }
+}
