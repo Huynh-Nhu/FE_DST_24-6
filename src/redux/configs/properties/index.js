@@ -28,7 +28,7 @@ import detail_text from "./detail_text";
 import detail_image from "./detail_image";
 import detail_images from "./detail_images";
 import barcode_activation from "./barcode_activation";
-
+import grid from "./grid"
 const properties = {
   text,
   entry,
@@ -56,6 +56,7 @@ const properties = {
   detail_images,
   code_generating_button,
   barcode_activation,
+  grid,
 };
 
 export default properties;

@@ -562,4 +562,6 @@ export default {
   "Comparative value":"Giá trị so sánh",
   "Comparison method":"Phương thức so sánh ",
   "select value" :"Chọn giá trị",
+  "Area" : "Vùng",
+  "Enter from 1 to 12": "Nhập từ 1 đến 12"
 };

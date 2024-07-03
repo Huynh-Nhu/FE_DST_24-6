@@ -9,5 +9,14 @@ const grid = [
     type: "text",
     path: "props.name",
   },
+  {
+    id: getFormatedUUID(),
+    label: lang["props.grid"],
+    type: "grid",
+    path: "props.style.grid",
+    // pathChidren : "props.children.colIndex"
+  },
+ 
+
 ];
 export default grid;

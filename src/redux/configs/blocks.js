@@ -1,4 +1,5 @@
 import { style } from "d3";
+import grid from "./blocks/grid";
 
 const blockTypes = {
   text: "text",
@@ -337,6 +338,19 @@ const initialStates = {
       joiningTable: { tables: [], select_root: {} },
       params: [],
       style: {
+        ...defaultStylesheet,
+      },
+    },
+  },
+  grid: {
+    name: "grid",
+    children: [],
+    props: {
+      title: {
+        content: "Title",
+      },
+      style: {
+        grid: [],
         ...defaultStylesheet,
       },
     },
@@ -907,18 +921,6 @@ const initialStates = {
       visible: true,
     },
     props: {
-      style: {
-        ...defaultStylesheet,
-      },
-    },
-  },
-
-  grid: {
-    name: "grid",
-    props: {
-      title: {
-        content: "Title",
-      },
       style: {
         ...defaultStylesheet,
       },

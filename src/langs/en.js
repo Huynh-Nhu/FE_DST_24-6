@@ -555,5 +555,7 @@ export default {
    "Prerequisites":"Prerequisites",
    "Position":"Position",
    "Comparative value":"Comparative value",
-   "Comparison method":"Comparison method"
+   "Comparison method":"Comparison method",
+    "Area" : "Area",
+    "Enter from 1 to 12" : "Enter from 1 to 12"
 };

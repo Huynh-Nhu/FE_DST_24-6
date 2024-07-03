@@ -64,41 +64,6 @@ export default function TABLE(props) {
   // const [calculateList, setCalculateList] = useState(calculates);
   const fieldsAndCalculates = list?.concat(calculateList);
 
-  // const selectedCpn = useSelector((state) => state.selectedCpn);
-  // const setPropByPath = (object, path = [], value) => {
-  //   if (path?.length == 1) {
-  //     object = { ...object, [path[0]]: value };
-  //   } else {
-  //     try {
-  //       object[path[0]] = setPropByPath(
-  //         object[path[0]],
-  //         path.slice(1, path.length),
-  //         value
-  //       );
-  //     } catch (e) { }
-  //   }
-  //   return object;
-  // };
-  // const updateSelectedComponent = (value, path) => {
-  //   const newComp = setPropByPath(selectedCpn, path, value);
-
-  //   dispatch({
-  //     branch: "design-ui",
-  //     type: "overideSelectedComp",
-  //     payload: {
-  //       component: newComp,
-  //     },
-  //   });
-  // };
-  // useEffect(() => {
-  //   updateSelectedComponent(fieldsAndCalculates, ["props", "source", "thinh"]);
-  // }, []);
-  // console.log("this is thinh", fields);
-  // const [list, setList] = useState(fields);
-  // const [calculateList, setCalculateList] = useState(calculates);
-  // const fieldsAndCalculates = list?.concat(calculateList)
-  // console.log("this is list", fieldsAndCalculates);
-  // console.log("this is calculateList", calculateList);
 
   const [drops, setDrops] = useState({
     configs: true,
@@ -158,9 +123,9 @@ export default function TABLE(props) {
 
   const moveToAddPage = () => {
     const hiddenPage = pages.find((page) => page.block == id);
+    console.log("hiddenPage", hiddenPage);
 
     if (hiddenPage) {
-      console.log("idddd", id);
       dispatch({
         branch: "side-funcs",
         type: "UpdateHiddenPageButDeHellOnTable",

@@ -76,6 +76,7 @@ const vi = {
   "styleIcon.margin": "Lề ngoài biểu tượng",
   "styleIcon.padding": "Lề trong biểu tượng",
   "style.width": "Rộng",
+  "props.grid" : "Lưới",
 
   /**
    * BOREDER STIELE

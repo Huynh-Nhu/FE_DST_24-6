@@ -57,14 +57,14 @@ export default () => {
       },
     });
   };
-
-  const appendChildComponent = (id) => {
+  const appendChildComponent = (id, colId) => {
     dispatch({
       branch: "design-ui",
       type: "appendChildComponent",
       payload: {
         id,
         block: floating.block,
+        col: colId
       },
     });
   };
@@ -82,8 +82,9 @@ export default () => {
 
   const renderComponents = (components = [], parent = undefined) => {
     return components.map((cpn, index) => {
-      const { props, id, name, children } = cpn;
-      const mergedProps = { ...props, id };
+      const { props, id, name, children ,colIndex } = cpn;
+      // console.log("compmmmm", cpn);
+      const mergedProps = { ...props, id, colIndex };
 
       const Component = functions.getComponentByName(name);
       if (Component) {

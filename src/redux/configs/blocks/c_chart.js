@@ -23,7 +23,7 @@ export default (props) => {
     new_charts,
     buttons,
   } = props;
-  console.log("Props", props);
+  // console.log("Props", props);
   const CHART_TYPE = {
     VerticalLineChart: "bar",
     HorizontalLineChart: "bar",

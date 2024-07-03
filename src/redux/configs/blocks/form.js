@@ -4,7 +4,7 @@ import { ReactSortable } from "react-sortablejs";
 import React, { useState } from "react";
 
 export default function Component(props) {
-  const { cache, gridState, preview } = useSelector((state) => state);
+  const { cache, preview } = useSelector((state) => state);
   const {
     id,
     zIndex,
@@ -106,7 +106,7 @@ export default function Component(props) {
       </div>
     );
   } else {
-    console.log("itemwwww", children)
+    // console.log("itemwwww", children)
     return (
       <div className="design-zone-container" style={{ ...style, zIndex }}>
         {/* {renderFrontLiner(id, parent)} */}

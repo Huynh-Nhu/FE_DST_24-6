@@ -5,6 +5,7 @@ import {
   faCode,
   faDiagramNext,
   faFont,
+  faGrip,
   faImage,
   faImages,
   faLeaf,
@@ -23,13 +24,16 @@ import { useDispatch, useSelector } from "react-redux";
 import $ from "jquery";
 import { useEffect } from "react";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
   const dispatch = useDispatch();
   const { functions, blockTypes, floating, page, selectedCpn } = useSelector(
     (state) => state
   );
   const FloatingBoxTrigger = (e, icon, text, type) => {
+    // console.log("eeeee nhe em ", e);
     const { pageX, pageY } = e;
+
 
     dispatch({
       branch: "floating-boxes",
@@ -287,7 +291,7 @@ export default () => {
               Thao tác tùy chọn và tạo mã tùy chọn
             </span>
           </div>
-          <div
+          {/* <div
             className="block table"
             onMouseDown={(e) => {
               FloatingBoxTrigger(
@@ -304,7 +308,7 @@ export default () => {
             <span className="block-name">
               Lưới
             </span>
-          </div>
+          </div> */}
         </div>
 
         {/* <span className="block-type">KHỐI LAYOUT</span>
@@ -567,6 +571,32 @@ export default () => {
             </div>
           </div>
         </div>
+
+            {/* Them khoi layout */}
+            <div>
+          <span className="block-type">KHỐI LAYOUT</span>
+          <div className="blocks">
+          <div
+            className="block table"
+            onMouseDown={(e) => {
+              FloatingBoxTrigger(
+                e,
+                faCode,
+                "Thao tác tùy chọn",
+                blockTypes.grid
+              );
+            }}
+          >
+            <div className="block-icon">
+              <FontAwesomeIcon icon={faGrip} />
+            </div>
+            <span className="block-name">
+              Lưới
+            </span>
+          </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

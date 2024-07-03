@@ -28,187 +28,6 @@ import { LinkCharts } from "./Components/Search";
 import { List } from "immutable";
 import { SelectDisplayFields } from "./Components/SelectDisplayFields";
 
-// export default function Properties() {
-//   const selectedCpn = useSelector((state) => state.selectedCpn);
-//   const selectedCpns = useSelector((state) => state.selectedCpns);
-//   const propertySet = useSelector((state) => state.propertySet);
-
-//   const [properties, setProperties] = useState(propertySet);
-
-//   useEffect(() => {
-//     const parent = selectedCpns.find((cpn) => cpn.id == selectedCpn.parent_id);
-//     if (parent) {
-//       const parents = selectedCpns?.slice(0, selectedCpns.length - 1);
-//       const filtedProperties = [];
-
-//       for (let i = 0; i < propertySet.length; i++) {
-//         const { onlyExistsIn } = propertySet[i];
-//         let valid = false;
-//         if (onlyExistsIn) {
-//           const directParent = onlyExistsIn.find(
-//             (c) => c.type == "direct" && c.name == parent.name
-//           );
-
-//           if (directParent) {
-//             valid = true;
-//           }
-
-//           const cascadingParents = onlyExistsIn.filter(
-//             (c) => c.type == "cascading"
-//           );
-//           const atleastOneParentIsCascading = parents.filter((par) => {
-//             const { name } = par;
-//             const isExisted = cascadingParents.find(
-//               (cpar) => cpar.name == name
-//             );
-//             return isExisted;
-//           });
-
-//           if (atleastOneParentIsCascading.length > 0) {
-//             valid = true;
-//           }
-
-//           if (valid) {
-//             filtedProperties.push(propertySet[i]);
-//           }
-//         } else {
-//           filtedProperties.push(propertySet[i]);
-//         }
-//       }
-//       setProperties(filtedProperties);
-//     } else {
-//       const filtedProperties = [];
-//       for (let i = 0; i < propertySet.length; i++) {
-//         const { onlyExistsIn } = propertySet[i];
-//         if (!onlyExistsIn) {
-//           filtedProperties.push(propertySet[i]);
-//         }
-//       }
-//       setProperties(filtedProperties);
-//     }
-//   }, [selectedCpn]);
-
-//   const dispatch = useDispatch();
-
-//   const getPropByPath = (path, object) => {
-//     const value = object[path[0]];
-//     if (path.length > 0 && value != undefined) {
-//       return getPropByPath(path.slice(1, path.length), value);
-//     } else {
-//       if (path.length == 0) {
-//         return object;
-//       } else {
-//         if (value == undefined) {
-//           return [];
-//         }
-//       }
-//     }
-//   };
-//   const setPropByPath = (object, path = [], value) => {
-//     if (path?.length == 1) {
-//       object = { ...object, [path[0]]: value };
-//     } else {
-//       try {
-//         object[path[0]] = setPropByPath(
-//           object[path[0]],
-//           path.slice(1, path.length),
-//           value
-//         );
-//       } catch (e) {}
-//     }
-//     return object;
-//   };
-
-//   const areParentActive = (childOf) => {
-//     if (childOf != undefined) {
-//       const { prop_id, caseIf } = childOf;
-//       const parent = propertySet.find((p) => p.id == prop_id);
-//       if (parent) {
-//         const { path } = parent;
-//         const value = getPropByPath(path.split("."), selectedCpn);
-//         if (value == caseIf) {
-//           return true;
-//         }
-//       }
-//       return false;
-//     }
-//     return true;
-//   };
-
-//   const updateSelectedComponent = (value, path) => {
-//     const newComp = setPropByPath(selectedCpn, path, value);
-
-//     dispatch({
-//       branch: "design-ui",
-//       type: "overideSelectedComp",
-//       payload: {
-//         component: newComp,
-//       },
-//     });
-//   };
-
-//   const setActiveComponent = (cpn) => {
-//     dispatch({
-//       branch: "design-ui",
-//       type: "setActiveComponent",
-//       payload: {
-//         id: cpn.id,
-//       },
-//     });
-//   };
-
-//   const getCpnById = () => {};
-
-//   return (
-//     <div className="properties">
-//       <div className="cpn-chain">
-//         {selectedCpns.slice(0, selectedCpns.length - 1).map((c, i) => (
-//           <div
-//             key={i}
-//             className="cpn"
-//             onClick={() => {
-//               setActiveComponent(c);
-//             }}
-//           >
-//             <span>{c.name?.toUpperCase()}</span>
-//             <span>
-//               <FontAwesomeIcon icon={faCaretRight} />
-//             </span>
-//           </div>
-//         ))}
-
-//         <div className="cpn">
-//           <span>{selectedCpn.name?.toUpperCase()}</span>
-//         </div>
-//       </div>
-
-//       {properties.map((prop, index) => {
-//         const { type } = prop;
-//         console.log(type, "Nhu");
-
-//         const Component = Components[type];
-//         if (Component != undefined) {
-//           return (
-//             <Component
-//               {...prop}
-//               index={properties.length - index + 2}
-//               selectedCpn={selectedCpn}
-//               updateSelectedComponent={updateSelectedComponent}
-//               getPropByPath={getPropByPath}
-//               areParentActive={areParentActive}
-//             />
-//           );
-//         } else {
-//           return null;
-//         }
-//       })}
-//       {/* {
-//                 selectedCpn.id && <UnlinkComponent selectedCpn={selectedCpn} />
-//             } */}
-//     </div>
-//   );
-// }
-
 // Nhu merge code
 
 export default function Properties() {
@@ -397,7 +216,7 @@ export default function Properties() {
   sortedProperties.forEach((prop) => {
     if (prop && prop.path) {
       const { path, type } = prop;
-      console.log("propPath", path);
+      // console.log("propPath", path, type);
       if (
         path.includes("props.name") ||
         path.includes("props.content") ||
@@ -438,7 +257,6 @@ export default function Properties() {
         path.includes("props.prefix") || // tiền tố
         path.includes("props.postfix") || // hậu tố
         path.includes("props.dateFormat") || // kiểu ngày
-
         path.includes("props.displayField")
       ) {
         Action.push(prop);
@@ -479,7 +297,6 @@ export default function Properties() {
         path.includes("props.stylePostfix.padding") ||
         path.includes("props.styleIcon.margin") ||
         path.includes("props.styleIcon.padding") ||
-
         path.includes("props.style.borderColor")
       ) {
         UI.push(prop);
@@ -2365,7 +2182,7 @@ const SelectChartTypes = (props) => {
   }, [newChart]);
   // hiện ra
   return !selectedCpn?.props?.field?.length ? (
-    <div style={{ padding: "1rem" }}>
+    <div className="padding-1rem">
       <div className="c-chart p-0">
         <div
           className={` ${
@@ -2802,7 +2619,7 @@ const TableFieldsPicker = (props) => {
     let prevFieldsAndCalculates =
       selectedCpn?.props?.source?.display_fields || [];
     const itemIndex = prevFieldsAndCalculates?.indexOf(field);
-    console.log("this is prevFieldsAndCalculates", itemIndex);
+    // console.log("this is prevFieldsAndCalculates", itemIndex);
     let newFieldsAndCalculates = prevFieldsAndCalculates;
     if (isFieldSelected) {
       newFieldsAndCalculates = prevFieldsAndCalculates.filter(
@@ -3267,7 +3084,7 @@ const TableCalculateFields = (props) => {
   const [calculateList, setCalculateList] = useState(
     selectedCpn?.props?.source?.calculates
   );
-  console.log("this is calculateList", calculateList);
+  // console.log("this is calculateList", calculateList);
   const [list, setList] = useState(selectedCpn?.props?.source?.fields);
   // const [calculateList, setCalculateList] = useState(calculates);
 
@@ -3416,7 +3233,7 @@ const TableCalculateFields = (props) => {
     let prevFieldsAndCalculates =
       selectedCpn?.props?.source?.display_fields || [];
     const itemIndex = prevFieldsAndCalculates?.indexOf(field);
-    console.log("this is prevFieldsAndCalculates", itemIndex);
+    // console.log("this is prevFieldsAndCalculates", itemIndex);
     let newFieldsAndCalculates = prevFieldsAndCalculates;
     if (field.checked === true) {
       newFieldsAndCalculates = prevFieldsAndCalculates.filter(
@@ -5423,7 +5240,7 @@ const PickDetailSinglePropertyButOnlyNonMultipleFileType = (props) => {
     }
 
     return (
-    <div className="padding-1rem">
+      <div className="padding-1rem">
         <Select
           value={option}
           onChange={(value) => {
@@ -5431,7 +5248,7 @@ const PickDetailSinglePropertyButOnlyNonMultipleFileType = (props) => {
           }}
           options={options}
         />
-    </div>
+      </div>
     );
   }
   return;
@@ -5800,133 +5617,271 @@ const PreImportLockButtonSelection = (props) => {
                   </div>
                 </div>
               </div>
-              {/* <div className="table-fields-picker">
-            <div className="fields-picker-header">
-              <span
-                style={{
-                  width: "100%",
-                  display: "block",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  fontWeight: "normal",
-                }}
-              >
-                {Object.values(data).join(" - ")}
-              </span>
-            </div>
-            <div className="picker-field-list">
-              {DefaultButtonSelection(
-                data,
-                faArrowUpRightFromSquare,
-                "Chi tiết",
-                "detail"
-              )}
-              {DefaultButtonSelection(data, faEdit, "Cập nhật", "update")}
-              {DefaultButtonSelection(data, faTrash, "Xóa", "delete")}
-
-              {buttons.map((btn) => {
-                return (
-                  <div
-                    className="field-picker"
-                    style={{ justifyContent: "flex-start" }}
-                  >
-                    <div className="picker-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={
-                          thisFieldConfig?.[data[primaryField.fomular_alias]]?.[
-                            btn.id
-                          ]
-                        }
-                        onClick={() => {
-                          checkTrigger(data, btn);
-                        }}
-                      />
-                    </div>
-
-                    <div className="picker-label" style={{ margin: "0" }}>
-                      <FontAwesomeIcon
-                        icon={icons[btn?.props?.icon]?.icon || icons["6"].icon}
-                      />
-                    </div>
-
-                    <div className="picker-label" style={{ marginLeft: "1em" }}>
-                      <span>{btn.props.name}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div> */}
             </div>
           ))}
         </div>
       )}
     </>
-    // <div className={"fields-picker"}>
-    //   {preImportData.map((data) => (
-    //     <div className="table-fields-picker">
-    //       <div className="fields-picker-header">
-    //         <span
-    //           style={{
-    //             width: "100%",
-    //             display: "block",
-    //             overflow: "hidden",
-    //             whiteSpace: "nowrap",
-    //             textOverflow: "ellipsis",
-    //             fontWeight: "normal",
-    //           }}
-    //         >
-    //           {Object.values(data).join(" - ")}
-    //         </span>
-    //       </div>
-    //       <div className="picker-field-list">
-    //         {DefaultButtonSelection(
-    //           data,
-    //           faArrowUpRightFromSquare,
-    //           "Chi tiết",
-    //           "detail"
-    //         )}
-    //         {DefaultButtonSelection(data, faEdit, "Cập nhật", "update")}
-    //         {DefaultButtonSelection(data, faTrash, "Xóa", "delete")}
+  );
+};
+const SelectObject = (props) => {
+  const { index, item, allChildren, onChange, setColumns } = props;
+  const [selectStart, setSelectStart] = useState(item?.map((ite) => ite.id));
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    setSelectStart(newValue);
+    // setSelectStart(item?.map((ite) => ite.id))
+    onChange(newValue, index);
+  };
 
-    //         {buttons.map((btn) => {
-    //           return (
-    //             <div
-    //               className="field-picker"
-    //               style={{ justifyContent: "flex-start" }}
-    //             >
-    //               <div className="picker-checkbox">
-    //                 <input
-    //                   type="checkbox"
-    //                   checked={
-    //                     thisFieldConfig?.[data[primaryField.fomular_alias]]?.[
-    //                       btn.id
-    //                     ]
-    //                   }
-    //                   onClick={() => {
-    //                     checkTrigger(data, btn);
-    //                   }}
-    //                 />
-    //               </div>
+  useEffect(() => {
+    setColumns((prevColumns) => {
+      const updatedColumns = [...prevColumns];
+      updatedColumns[index] = {
+        ...updatedColumns[index],
+        child: item,
+      };
+      return updatedColumns;
+    });
+  }, [selectStart]);
+  // console.log("syyyyy", allChildren);
+  return (
+    <>
+      <select
+        key={index}
+        className="form-select"
+        value={item?.map((ite) => ite?.id)}
+        onChange={handleChange}
+      >
+        <option value="null">Chọn child</option>
+        {/* {allChildren.map((child) => {
+          return(
+          <option key={child.id} value={child.id}>
+            {child.props?.name || child.props?.content || child.props?.title}
+          </option>
+        )})} */}
+        {allChildren.map((child) => {
+  console.log("jdghr",child);
+  return (
+    <option key={child.id} value={child.id}>
+      {child.props?.name || child.props?.content || child.props?.title || child.name  }
+    </option>
+  );
+})}
+      </select>
+    </>
+  );
+};
+const Grid = (props) => {
+  const {
+    label,
+    path,
+    pathChidren,
+    getPropByPath,
+    updateSelectedComponent,
+    selectedCpn,
+    index,
+  } = props;
+  const splittedPath = path.split(".");
 
-    //               <div className="picker-label" style={{ margin: "0" }}>
-    //                 <FontAwesomeIcon
-    //                   icon={icons[btn?.props?.icon]?.icon || icons["6"].icon}
-    //                 />
-    //               </div>
+  const temp = getPropByPath(splittedPath, selectedCpn);
 
-    //               <div className="picker-label" style={{ marginLeft: "1em" }}>
-    //                 <span>{btn.props.name}</span>
-    //               </div>
-    //             </div>
-    //           );
-    //         })}
-    //       </div>
-    //     </div>
-    //   ))}
-    // </div>
+  const child = selectedCpn.children;
+
+  const [columns, setColumns] = useState(temp.length > 0 ? temp : []);
+
+  const [allChildren, setAllChildren] = useState(child);
+  const [deletechild, setDeleteChild] = useState(child);
+  const [showData, setShowData] = useState(true);
+  const { lang } = useSelector((s) => s);
+
+  const handeleShowData = () => {
+    setShowData(!showData);
+  };
+
+  const addColumn = () => {
+    setColumns([...columns, { value: "" }]);
+  };
+  const handleSelectChange = (newValue, index) => {
+    if (newValue !== "null") {
+      const childToReplace = child.find((item) => item.colIndex === index);
+      if (childToReplace) {
+        childToReplace.colIndex = null;
+      }
+      const newChild = child.find((item) => item.id === newValue);
+      newChild.colIndex = index;
+    } else {
+      const childToReplace = child.find((item) => item.colIndex === index);
+      if (childToReplace) {
+        childToReplace.colIndex = null;
+      }
+    }
+  };
+  const deleteColumn = (index) => {
+    const newColumns = [...columns];
+    newColumns.splice(index, 1);
+    setColumns(newColumns);
+
+    // Xóa select đã chọn ở cột đó
+    const childToReplace = child.find((item) => item.colIndex === index);
+    if (childToReplace) {
+      childToReplace.colIndex = null;
+    }
+  };
+  // console.log("columnnnn", child);
+  useEffect(() => {
+    updateSelectedComponent(columns, splittedPath);
+  }, [columns, child]);
+
+  return (
+    <div className="padding-1rem" style={{ zIndex: index }}>
+      <div className="c-chart">
+        <div
+          className={` ${
+            showData ? "chart-header p-0" : "chart-header-of p-0"
+          } d-flex flex-warp`}
+        >
+          <div
+            onClick={handeleShowData}
+            className="chart-label "
+            style={{ margin: "10px 8px" }}
+          >
+            <FontAwesomeIcon
+              icon={showData ? faAngleUp : faAngleRight}
+              className="me-2"
+            />
+            {lang["Area"]}
+          </div>
+          <div className="incon-plus-chart ms-auto">
+            <FontAwesomeIcon
+              className=""
+              icon={faCirclePlus}
+              onClick={addColumn}
+            />
+          </div>
+        </div>
+
+        {/* <button onClick={addColumn}>Thêm Column</button> */}
+        {showData && (
+          <div className="accordion" id="accordionExample">
+            {columns?.map((column, index) => {
+              return (
+                <div className="p-1">
+                  <div className="accordion-item accordion-item-chart">
+                    <h2
+                      className="accordion-header"
+                      key={index}
+                      id={`panelsStayOpen-headingChart${index}-Grid`}
+                      // onClick={handleClick}
+                    >
+                      <button
+                        className="accordion-button accordion-button-left"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#panelsStayOpen-collapse${index}-Grid`}
+                        // aria-expanded={i === 0 ? "true" : "false"}
+                        aria-controls={`panelsStayOpen-collapse${index}-Grid`}
+                      >
+                        {lang["Area"]}
+
+                        <span className="ml-1">{index + 1}</span>
+                        <div className="accordion-button-right">
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            onClick={() => deleteColumn(index)}
+                          />
+                        </div>
+                      </button>
+                    </h2>
+                    <div
+                      id={`panelsStayOpen-collapse${index}-Grid`}
+                      className={`accordion-collapse collapse ${
+                        index === 0 ? "show" : ""
+                      }`}
+                      aria-labelledby={`panelsStayOpen-headingChart${index}-Grid`}
+                    >
+                      <div className="accordion-body">
+                        <div className="row row-width ">
+                          <div className="col-3">
+                            <span>width </span>
+
+                            {/* <FontAwesomeIcon
+                                icon={faQuestion}
+                                className="question-icon"
+                              /> */}
+                            {/* <div class="tooltip-container">
+  <FontAwesomeIcon icon={faQuestion} className="question-icon" title="Tooltip text goes here" />
+</div> */}
+                            <div class="tooltip-container">
+                              <button class="tooltip-trigger">
+                                <FontAwesomeIcon
+                                  icon={faQuestion}
+                                  className="question-icon"
+                                />
+                              </button>
+                              <div class="tooltip-box">
+                                <div class="tooltip-content">
+                               
+                                Nhập vào giá trị từ 1 đến 12 để xác định chiều dài của vùng
+                                </div>
+                                <div class="tooltip-arrow"></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="col-9">
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={column.value}
+                              onChange={(e) => {
+                                const newColumns = [...columns];
+                                newColumns[index].value = e.target.value;
+                                setColumns(newColumns);
+                              }}
+                              placeholder={lang["Enter from 1 to 12"]}
+                            />
+                          </div>
+                        </div>
+                        <div className="row align-items-center mt-2">
+                          <div className="col-3">
+                            <span>Object</span>
+                          </div>
+                          <div className="col-9">
+                            {/* {child
+                              .filter((item) => item.colIndex === index)
+                              .map((item) => (
+                                <SelectObject
+                                  allChildren={allChildren}
+                                  onChange={handleSelectChange}
+                                  item={item}
+                                  index={index}
+                                />
+                              ))} */}
+                            <SelectObject
+                              allChildren={allChildren}
+                              onChange={handleSelectChange}
+                              setColumns={setColumns}
+                              columns={columns}
+                              item={child?.filter(
+                                (item) => item.colIndex === index
+                              )}
+                              index={index}
+                            />
+                          </div>
+                        </div>
+
+                        {/* <button onClick={() => deleteColumn(index)}>Xóa</button> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -5939,6 +5894,7 @@ const Components = {
   iconicSwitching: IconicSwitching,
   color: Color,
   bool: Bool,
+  grid: Grid,
   selection: ListSelection,
   childSelection: ChildSelection,
   apiSelection: ApiSelection,

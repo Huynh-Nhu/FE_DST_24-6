@@ -1,5 +1,6 @@
 const DEFAULT_PAGE_ICON = "6";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default (state, action) => {
   switch (action.type) {
     case "helloworld":
@@ -201,7 +202,7 @@ const removePageByPath = (pages, path) => {
 };
 
 const HelloWorld = (state, action) => {
-  console.log("HELLO WORLD FROM REDUX");
+  // console.log("HELLO WORLD FROM REDUX");
   return state;
 };
 
@@ -653,6 +654,7 @@ const setActiveComponent = (state, action) => {
    */
 
   const { id } = action.payload;
+  console.log("idd của payload", id);
   const { page } = state;
 
   const flattenComponents = flatteningComponents(page.component);
@@ -1041,7 +1043,7 @@ const updateOrderComponent = (state, action) => {
   return { ...state };
 };
 
-const addChildToComponent = (components, target_id, block) => {
+const addChildToComponent = (components, target_id, block, col) => {
   /**
    * Type: Vẫn là đệ quy nha .-.
    *
@@ -1061,12 +1063,13 @@ const addChildToComponent = (components, target_id, block) => {
    *
    */
 
+  // console.log("Có vô đây không khi kéo", col);
   for (let i = 0; i < components.length; i++) {
     const cpn = components[i];
     const { id, children } = cpn;
     if (id == target_id) {
       if (children != undefined) {
-        components[i].children.push({ parent_id: id, ...block });
+        components[i].children.push({ parent_id: id, colIndex: col , ...block });
       }
     } else {
       if (children) {
@@ -1088,42 +1091,44 @@ const appendChildComponent = (state, action) => {
    *
    */
 
-  const { id, block } = action.payload;
+  // console.log("payload",action.payload);
+  const { id, block , col} = action.payload;
+  
   if (block) {
     const { initialStates, page, pages, floating, functions } = state;
     const newBlock = functions.fillIDToBlockAndChildren(
       JSON.parse(JSON.stringify(initialStates[block]))
     );
-
-    const newComponent = addChildToComponent(page.component, id, newBlock);
+    const newComponent = addChildToComponent(page.component, id, newBlock, col);
     page.component = newComponent;
-
+    
     const newPages = pages.map((p) => {
       if (p.page_id == page.page_id) {
+        // console.log("newLockkk", page);
         return page;
       }
       return p;
     });
 
-    // if (block == "table") {
+    if (block == "table") {
 
-    //     const hidden_page_id = state.functions.getFormatedUUID()
+        const hidden_page_id = state.functions.getFormatedUUID()
 
-    //     const hiddenPage = {
-    //         page_id: hidden_page_id,
-    //         page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+        const hiddenPage = {
+            page_id: hidden_page_id,
+            page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
 
-    //         parent: page.page_id,
-    //         block: newBlock.id,
+            parent: page.page_id,
+            block: newBlock.id,
 
-    //         is_home: false,
-    //         is_hidden: true,
-    //         icon: DEFAULT_PAGE_ICON,
-    //         children: [],
-    //         component: []
-    //     }
-    //     newPages.push(hiddenPage)
-    // }
+            is_home: false,
+            is_hidden: true,
+            icon: DEFAULT_PAGE_ICON,
+            children: [],
+            component: []
+        }
+        newPages.push(hiddenPage)
+    }
 
     floating.block = undefined;
     return { ...state, pages: newPages, page, floating };

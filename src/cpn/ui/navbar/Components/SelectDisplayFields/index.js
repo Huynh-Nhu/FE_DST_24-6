@@ -165,7 +165,7 @@ function Component(props) {
 
     // thinh this is where i need to put the value in display fields
     let prevFieldsAndCalculates = selectedCpn?.props?.source?.display_fields;
-    console.log("this is prevFieldsAndCalculates", prevFieldsAndCalculates);
+    // console.log("this is prevFieldsAndCalculates", prevFieldsAndCalculates);
     // Create a lookup object from arrayTwo
     const lookup = {};
     prevFieldsAndCalculates?.forEach(item => {
@@ -180,7 +180,7 @@ function Component(props) {
     // Convert the lookup object back to an array
     const mergedArray = Object.values(lookup);
 
-    console.log("this is mergedArray", mergedArray);
+    // console.log("this is mergedArray", mergedArray);
 
     // let newFieldsAndCalculates = prevFieldsAndCalculates.concat(fields);
     updateSelectedComponent(mergedArray, [
