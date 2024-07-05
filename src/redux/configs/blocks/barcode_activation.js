@@ -16,7 +16,6 @@ const BarcodeActivation = (props) => {
     params,
     fields,
   } = props;
-  console.log(props);
   const dispatch = useDispatch();
 
   const isActive = () => {

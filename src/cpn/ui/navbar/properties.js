@@ -5644,7 +5644,6 @@ const SelectObject = (props) => {
       return updatedColumns;
     });
   }, [selectStart]);
-  // console.log("syyyyy", allChildren);
   return (
     <>
       <select
@@ -5654,14 +5653,8 @@ const SelectObject = (props) => {
         onChange={handleChange}
       >
         <option value="null">Chọn child</option>
-        {/* {allChildren.map((child) => {
-          return(
-          <option key={child.id} value={child.id}>
-            {child.props?.name || child.props?.content || child.props?.title}
-          </option>
-        )})} */}
+   
         {allChildren.map((child) => {
-  console.log("jdghr",child);
   return (
     <option key={child.id} value={child.id}>
       {child.props?.name || child.props?.content || child.props?.title || child.name  }
@@ -5683,10 +5676,10 @@ const Grid = (props) => {
     index,
   } = props;
   const splittedPath = path.split(".");
-
   const temp = getPropByPath(splittedPath, selectedCpn);
-
+  
   const child = selectedCpn.children;
+  
 
   const [columns, setColumns] = useState(temp.length > 0 ? temp : []);
 
@@ -5700,7 +5693,7 @@ const Grid = (props) => {
   };
 
   const addColumn = () => {
-    setColumns([...columns, { value: "" }]);
+    setColumns([...columns, { value: "12" }]);
   };
   const handleSelectChange = (newValue, index) => {
     if (newValue !== "null") {
@@ -5728,7 +5721,6 @@ const Grid = (props) => {
       childToReplace.colIndex = null;
     }
   };
-  // console.log("columnnnn", child);
   useEffect(() => {
     updateSelectedComponent(columns, splittedPath);
   }, [columns, child]);
@@ -5804,14 +5796,6 @@ const Grid = (props) => {
                         <div className="row row-width ">
                           <div className="col-3">
                             <span>width </span>
-
-                            {/* <FontAwesomeIcon
-                                icon={faQuestion}
-                                className="question-icon"
-                              /> */}
-                            {/* <div class="tooltip-container">
-  <FontAwesomeIcon icon={faQuestion} className="question-icon" title="Tooltip text goes here" />
-</div> */}
                             <div class="tooltip-container">
                               <button class="tooltip-trigger">
                                 <FontAwesomeIcon
@@ -5848,16 +5832,6 @@ const Grid = (props) => {
                             <span>Object</span>
                           </div>
                           <div className="col-9">
-                            {/* {child
-                              .filter((item) => item.colIndex === index)
-                              .map((item) => (
-                                <SelectObject
-                                  allChildren={allChildren}
-                                  onChange={handleSelectChange}
-                                  item={item}
-                                  index={index}
-                                />
-                              ))} */}
                             <SelectObject
                               allChildren={allChildren}
                               onChange={handleSelectChange}

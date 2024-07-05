@@ -581,8 +581,8 @@ export default () => {
             onMouseDown={(e) => {
               FloatingBoxTrigger(
                 e,
-                faCode,
-                "Thao tác tùy chọn",
+                faGrip,
+                "Lưới",
                 blockTypes.grid
               );
             }}

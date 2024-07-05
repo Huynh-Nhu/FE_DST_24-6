@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAlignCenter,
@@ -16,9 +16,13 @@ import {
   faUnderline,
 } from "@fortawesome/free-solid-svg-icons";
 import $ from "jquery";
+import { ReactSortable } from "react-sortablejs";
+import { index } from "d3";
 
 export default (props) => {
-  const { cache, gridState, floating, preview } = useSelector((state) => state);
+  const { cache, gridState, floating, page, preview } = useSelector(
+    (state) => state
+  );
   const {
     id,
     zIndex,
@@ -31,12 +35,9 @@ export default (props) => {
     renderBackLiner,
     style,
   } = props;
-  // console.log("children", children);
   const dispatch = useDispatch();
-  const [gridPositions, setGridPositions] = useState({});
-  const [unfoundChildren, setUnfoundChildren] = useState([]);
-  const [updatedGridStyle, setUpdatedGridStyle] = useState(style.grid);
   const [childrenInEachColumn, setChildrenInEachColumn] = useState({});
+  const [element, setElement] = useState(children);
 
   const isActive = () => {
     const { activeComponent, hoverComponent } = cache;
@@ -88,8 +89,7 @@ export default (props) => {
   const FlexAppendsChild = () => {
     appendChildComponent(id);
   };
-   const FlexAppendsChildCol = (rowIndex) => {
-    // Kiểm tra xem cột đó đã có child chưa
+  const FlexAppendsChildCol = (rowIndex) => {
     if (childrenInEachColumn[rowIndex]) {
       // Nếu đã có child, không cho phép thêm nữa
       return;
@@ -101,17 +101,11 @@ export default (props) => {
     let style = { zIndex };
     return style;
   };
+  useEffect(() => {
+    setElement(children);
+  }, [children]);
 
   useEffect(() => {
-    // const foundChildIds = style.grid.map((row) => row.childId);
-    const unfound = children.filter(
-      (child) =>
-        child.props.colIndex === null || child.props.colIndex === undefined
-    );
-    setUnfoundChildren(unfound);
-
-
-
     const newChildrenInEachColumn = {};
     style.grid.forEach((row, index) => {
       newChildrenInEachColumn[index] = children.some(
@@ -120,49 +114,138 @@ export default (props) => {
     });
     setChildrenInEachColumn(newChildrenInEachColumn);
   }, [children, style.grid]);
+
+
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    console.log("resultttt", result);
+    const newColIndex = Number(result.destination.droppableId.split("-")[1]);
+
+    dispatch({
+      branch: "design-ui",
+      type: "updateChildrenOrder",
+      payload: {
+        idGrid: id,
+        id: result.draggableId,
+        col: newColIndex,
+        index_send: result.source.index,
+        index_receive: result.destination.index,
+      },
+    });
+  };
   const renderGrid = () => {
     return (
-      <div
-        className="grid-container row"
-        onClick={(e) => {
-          const rowIndex = style?.grid.findIndex((row) =>
-            e.target.classList.contains(`col-${row.value}`)
-          );
-          if (
-            !children.some((child) => child.props.colIndex === rowIndex) &&
-            e.target === e.currentTarget
-          ) {
-            SwitchingStateBack(id);
-          }
-        }}
-      >
-        {style?.grid.map((row, rowIndex) => (
-          <div
-            // onMouseUp={() => appendChildComponent(id, rowIndex)}
-            onMouseUp={() => FlexAppendsChildCol(rowIndex)}
-            key={rowIndex}
-            className={`${
-              preview ? "" : "border-grid grid-col "
-            }  col-${row.value}`}
-            // style={{height: "fit-content"}}
-          >
-            {children
-              .filter((child) => child.props.colIndex === rowIndex)
-              .map((child, index) => (
-                <div key={index}>{child}</div>
-              ))}
-            {/* {row.child} */}
-          </div>
-        ))}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              className="grid-container row"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              onClick={(e) => {
+                const rowIndex = style?.grid.findIndex((row) =>
+                  e.target.classList.contains(`col-${row.value}`)
+                );
+                if (
+                  !element.some((child) => child.props.colIndex === rowIndex) &&
+                  e.target === e.currentTarget
+                ) {
+                  SwitchingStateBack(id);
+                }
+              }}
+            >
+              {style?.grid.map((row, rowIndex) => {
+                return (
+                  <Droppable
+                    key={rowIndex}
+                    droppableId={`droppable-${rowIndex}`}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        onMouseUp={() => FlexAppendsChildCol(rowIndex)}
+                        className={`${
+                          preview ? "" : "border-grid grid-col "
+                        } col-${row.value} `}
+                        style={{
+                          width: row.value === "12" && "99%",
+                        }}
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                       
+                        onClick={(e) => {
+                          if (
+                            !element.some(
+                              (child) => child.props.colIndex === rowIndex
+                            )
+                          ) {
+                            SwitchingStateBack(id);
+                          }
+                        }}
+                      >
+                       
+                        {element?.map((child, index) => {
+                          return child.props.colIndex === rowIndex ? (
+                            <Draggable
+                              key={child.key}
+                              draggableId={child.key}
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <>
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    {child}
+                                  </div>
+                                </>
+                              )}
+                            </Draggable>
+                          ) : (
+                            <></>
+                          );
+                        })}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                );
+              })}
 
-        <div className="unfound-children">
-          {unfoundChildren.map((child, index) => (
-            <div key={index} className="unfound-child">
-              {child}
+              <div className="unfound-children">
+                {element?.map((child, index) =>
+                  child.props.colIndex === null ||
+                  child.props.colIndex === undefined ? (
+                    <Draggable
+                      key={child.key}
+                      draggableId={child.key}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <>
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            {child}
+                          </div>
+                        </>
+                      )}
+                    </Draggable>
+                  ) : (
+                    <></>
+                  )
+                )}
+              </div>
+              {provided.placeholder}
             </div>
-          ))}
-        </div>
-      </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     );
   };
   if (preview) {

@@ -95,7 +95,7 @@ function Component(props) {
     setState(initials_tables);
     setSelectedCharts(initial_charts);
   }, [selectedCpn]);
-  console.log("joinedTables", joinedTables);
+  // console.log("joinedTables", joinedTables);
   return (
     <div className="padding-1rem">
       <div className="c-chart p-0">

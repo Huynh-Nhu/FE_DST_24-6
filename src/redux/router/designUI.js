@@ -1,3 +1,5 @@
+import { Children } from "react";
+
 const DEFAULT_PAGE_ICON = "6";
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -73,10 +75,13 @@ export default (state, action) => {
 
     case "updateOrderComponent":
       return updateOrderComponent(state, action);
+
     case "addComponent":
       return addComponent(state, action);
       break;
-
+    case "updateChildrenOrder":
+      return updateChildrenOrder(state, action);
+      break;
     case "insertComponent":
       return insertComponent(state, action);
       break;
@@ -654,7 +659,7 @@ const setActiveComponent = (state, action) => {
    */
 
   const { id } = action.payload;
-  console.log("idd của payload", id);
+  // console.log("idd của payload", id);
   const { page } = state;
 
   const flattenComponents = flatteningComponents(page.component);
@@ -728,6 +733,7 @@ const updateChildComponent = (components, target_id, values) => {
     const cpn = components[i];
     const { id, children } = cpn;
     if (id == target_id) {
+
       components[i].props = { ...components[i].props, ...values };
     } else {
       if (children) {
@@ -740,6 +746,113 @@ const updateChildComponent = (components, target_id, values) => {
     }
   }
   return components;
+};
+// Nhu code
+const updateSelectedCpn = (children, id, values, send, receive) => {
+  const update = [...children];
+  if (isNaN(values) === false) {
+    const movedChild = update.find((child) => child.id === id);
+    update.splice(update.indexOf(movedChild), 1);
+    update.push(movedChild);
+  } else {
+    const [movedChild] = update.splice(send, 1);
+    update.splice(receive, 0, movedChild);
+  }
+
+  return update.map((child) => {
+    if (child.id === id) {
+      return {
+        ...child,
+        colIndex: isNaN(values) ? null : values,
+      };
+    }
+    if (child.colIndex === values) {
+      return {
+        ...child,
+        colIndex: null,
+      };
+    }
+    return child;
+  });
+};
+// Nhu codee
+const updateUIGridAndOrder = (
+  components,
+  targetId,
+  send,
+  receive,
+  cpnId,
+  values
+) => {
+  const updatedComponents = components.map((component) => {
+    if (component.id === targetId) {
+      const updatedChildren = [...component.children];
+     
+      if (isNaN(values) === false) {
+        console.log("khi keo item vao col ");
+        const movedChild = updatedChildren.find((child) => child.id === cpnId);
+        updatedChildren.splice(updatedChildren.indexOf(movedChild), 1);
+        // Thêm phần tử vào cuối mảng
+        updatedChildren.push(movedChild);
+      } else {
+        console.log("khi keo item ra col ");
+
+        const [movedChild] = updatedChildren.splice(send, 1);
+        updatedChildren.splice(receive, 0, movedChild);
+      }
+
+      return {
+        ...component,
+        children: updatedChildren.map((child) => {
+          if (child.id === cpnId) {
+            return {
+              ...child,
+              colIndex: isNaN(values) ? null : values,
+            };
+          }
+          if (child.colIndex === values) {
+            return {
+              ...child,
+              colIndex: null,
+            };
+          }
+          return child;
+        }),
+      };
+    }
+    return component;
+  });
+
+  return updatedComponents;
+};
+// Nhu code
+const updateChildrenOrder = (state, action) => {
+  const { id, col, idGrid, index_send, index_receive } = action.payload;
+  const { page, selectedCpn } = state;
+  const { component } = page;
+  const { children } = selectedCpn;
+// Bắt sự thay đổi trên giao diện và khi ấn mở navbar thì nó sẽ bắt dự liệu đó cập nhật lại
+  if (selectedCpn.id === idGrid) {
+    selectedCpn.children = updateSelectedCpn(
+      children,
+      id,
+      col,
+      index_send,
+      index_receive
+    );
+  }
+  // Bắt sự thay đổi trong giao diện rồi cập nhật lại
+  page.component = updateUIGridAndOrder(
+    component,
+    idGrid,
+    index_send,
+    index_receive,
+    id,
+    col
+  );
+  return {
+    ...state,
+  };
 };
 
 const updateComponent = (state, action) => {
@@ -756,10 +869,12 @@ const updateComponent = (state, action) => {
   const { id, values } = action.payload;
   const { page, selectedCpn } = state;
   const { component } = page;
+  // console.log("selectedCpn", state, id);
 
   page.component = updateChildComponent(component, id, values);
 
   if (selectedCpn.id == id) {
+
     state.selectedCpn.props = { ...selectedCpn.props, ...values };
   }
 
@@ -1040,6 +1155,7 @@ const insertComponent = (state, action) => {
 const updateOrderComponent = (state, action) => {
   const { components } = action.payload;
   state.page.component = components;
+  // console.log("stateee", state.page.component);
   return { ...state };
 };
 
@@ -1069,7 +1185,7 @@ const addChildToComponent = (components, target_id, block, col) => {
     const { id, children } = cpn;
     if (id == target_id) {
       if (children != undefined) {
-        components[i].children.push({ parent_id: id, colIndex: col , ...block });
+        components[i].children.push({ parent_id: id, colIndex: col, ...block });
       }
     } else {
       if (children) {
@@ -1092,8 +1208,7 @@ const appendChildComponent = (state, action) => {
    */
 
   // console.log("payload",action.payload);
-  const { id, block , col} = action.payload;
-  
+  const { id, block, col } = action.payload;
   if (block) {
     const { initialStates, page, pages, floating, functions } = state;
     const newBlock = functions.fillIDToBlockAndChildren(
@@ -1101,7 +1216,7 @@ const appendChildComponent = (state, action) => {
     );
     const newComponent = addChildToComponent(page.component, id, newBlock, col);
     page.component = newComponent;
-    
+
     const newPages = pages.map((p) => {
       if (p.page_id == page.page_id) {
         // console.log("newLockkk", page);
@@ -1111,23 +1226,22 @@ const appendChildComponent = (state, action) => {
     });
 
     if (block == "table") {
+      const hidden_page_id = state.functions.getFormatedUUID();
 
-        const hidden_page_id = state.functions.getFormatedUUID()
+      const hiddenPage = {
+        page_id: hidden_page_id,
+        page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
 
-        const hiddenPage = {
-            page_id: hidden_page_id,
-            page_title: `[parent_name] - Trang phụ thêm dữ liệu`,
+        parent: page.page_id,
+        block: newBlock.id,
 
-            parent: page.page_id,
-            block: newBlock.id,
-
-            is_home: false,
-            is_hidden: true,
-            icon: DEFAULT_PAGE_ICON,
-            children: [],
-            component: []
-        }
-        newPages.push(hiddenPage)
+        is_home: false,
+        is_hidden: true,
+        icon: DEFAULT_PAGE_ICON,
+        children: [],
+        component: [],
+      };
+      newPages.push(hiddenPage);
     }
 
     floating.block = undefined;
